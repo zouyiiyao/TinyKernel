@@ -44,7 +44,7 @@ DESC_TYPE_DATA + 0x00
 DESC_VIDEO_HIGH4    equ (0x00 << 24) + DESC_G_4K + DESC_D_32 + \
 DESC_L + DESC_AVL + DESC_LIMIT_VIDEO2 + \
 DESC_P + DESC_DPL_0 + DESC_S_DATA + \
-DESC_TYPE_DATA + 0x0b
+DESC_TYPE_DATA + 0x0b    ; 这里书上的代码有错误，应该是0x0b而不是0x00
 
 ;;; 段选择子属性 ;;;
 RPL0                equ 00b
