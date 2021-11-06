@@ -162,6 +162,12 @@ LOADER_STACK_TOP equ LOADER_BASE_ADDR
 	mov ax, SELECTOR_VIDEO
 	mov gs, ax
 
+	; 加载kernel
+	mov eax, KERNEL_START_SECTOR            ; 硬盘上kernel.bin所在的扇区号：0x9
+	mov ebx, KERNEL_BIN_BASE_ADDR           ; 写入到内存中的物理地址：0x70000
+	mov ecx, 200                            ; 写入200个扇区
+	call rd_disk_m_32 
+
 	; 准备打开CPU分页
 	; 1. 准备好页目录表及页表
 	; 2. 将页表地址写入控制寄存器cr3
@@ -198,10 +204,144 @@ LOADER_STACK_TOP equ LOADER_BASE_ADDR
 	; 在开启分页后，重新加载gdt新地址
 	lgdt [gdt_ptr]
 
-	; 视频段段基址已经被更新，用字符V表示virtual addr
-	mov byte [gs:160], 'V' 
+	; 刷新流水线，此处不刷新也没问题
+	jmp SELECTOR_CODE:enter_kernel
+	enter_kernel:
+	call kernel_init            ; 内核被加载到内存后，loader分析其elf结构并将其展开到新的位置，展开后的映像才是真正运行的内核
+	mov esp, 0xc009f000         ; 修改栈指针，保持4KB对齐
+	; 跳转到内核代码的入口地址执行，最后一棒由内核接管
+	jmp KERNEL_ENTRY_POINT      ; 用地址0xc0001500访问测试，结果ok
+
+; rd_disk_m_32：读取硬盘n个扇区（32位下） 
+; -----------------------------------------------------------
+; eax：LBA扇区号
+; ebx：将数据写入的内存地址
+; ecx：读入的扇区数
+; -----------------------------------------------------------
+rd_disk_m_32:
+	mov esi, eax             ; 备份eax
+	mov di, cx               ; 备份cx
+
+	; 第1步：设置要读取的扇区数
+	mov dx, 0x1f2            ; 设置要读写的端口号
+	mov al, cl
+	out dx, al               ; 向0x1f2端口写入要读取的扇区数
+	mov eax, esi             ; 恢复ax
+
+	; 第2步：将LBA地址存入0x1f3-0x1f6
+
+	; LBA地址7-0位写入端口0x1f3
+	mov dx, 0x1f3
+	out dx, al
+
+	; LBA地址15-8位写入端口0x1f4
+	mov cl, 8
+	shr eax, cl              ; 逻辑右移
+	mov dx, 0x1f4
+	out dx, al
+
+	; LBA地址23-16位写入端口0x1f5
+	shr eax, cl
+	mov dx, 0x1f5
+	out dx, al
+
+	shr eax, cl
+	and al, 0x0f             ; 设置LBA地址24-27位
+	or al, 0xe0              ; 设置7-4位为1110，表示LBA模式
+	mov dx, 0x1f6
+	out dx, al
+
+	; 第3步：向0x1f7端口写入读命令，0x20
+	mov dx, 0x1f7
+	mov al, 0x20
+	out dx, al
+
+	; 第4步：检测硬盘状态
+	; 使用同一端口0x1f7，写时表示写入命令字，读时表示读入硬盘状态
+	.not_ready:
+	nop                      ; 什么也不做，目的是为了减少对硬盘的打扰
+	in al, dx
+	and al, 0x88             ; 第3位为1表示硬盘控制器已经准备好进行数据传输，第7位为1表示硬盘忙
+	cmp al, 0x08
+	jnz .not_ready           ; 若未准备好，继续等待
+
+	; 第5步：通过0x1f0端口读取数据
+	; di为要读取的扇区数，一个扇区512字节，每次读入一个字，一共需要读取512 * di / 2次
+	mov ax, di               ; 寄存器ax存放需要读取的扇区数
+	mov dx, 256
+	mul dx                   ; 计算256 * 扇区数
+	mov cx, ax               ; 乘积存放在寄存器cx中，作为循环次数
+
+	mov dx, 0x1f0
 	
-	jmp $                       ; 通过死循环让程序悬停在此
+	.go_on_read:
+	in ax, dx
+	mov [ebx], ax            ; 改用ebx（16位下使用bx）
+	add ebx, 2               ; 改用ebx（16位下使用bx） 
+	loop .go_on_read
+
+	; 返回调用函数的下一条指令继续执行
+	ret
+
+
+
+
+; 将kernel.bin中的segment拷贝到编译的地址
+; -----------------------------------------------------------
+kernel_init:
+	xor eax, eax                
+	xor ebx, ebx                     ; ebx记录程序头表地址
+	xor ecx, ecx                     ; cx记录程序头表中条目的数量，实际上就是段的数量
+	xor edx, edx                     ; dx记录程序头表中每个条目（program header）的字节大小，即用来描述段信息的数据结构的字节大小
+
+	; 偏移文件42字节处的属性是e_phentsize，表示每个program header的字节大小
+	mov dx, [KERNEL_BIN_BASE_ADDR + 42]
+	; 偏移文件28字节处的属性是e_phoff，表示第1个program header在文件中的偏移量
+	mov ebx, [KERNEL_BIN_BASE_ADDR + 28]
+	add ebx, KERNEL_BIN_BASE_ADDR
+	; 偏移文件44字节处是e_phnum，表示有几个program header
+	mov cx, [KERNEL_BIN_BASE_ADDR + 44]
+
+	; 拷贝每一个段（segment）
+	.each_segment:
+	cmp byte [ebx + 0], PT_NULL
+	je .PTNULL                       ; 若程序段类型等于PT_NULL，说明该program header未使用
+	; 调用函数memcpy的准备工作：为函数memcpy压入参数，参数从右往左依次压入，函数原型为memcpy(dst, src, size)
+	; 压入函数memcpy的第三个参数：size
+	push dword [ebx + 16]            ; program header中偏移16字节处是p_filesz
+	mov eax, [ebx + 4]               ; program header中偏移4字节处是p_offset
+	add eax, KERNEL_BIN_BASE_ADDR    ; 加上kernel.bin被加载到的物理地址，eax为该段的物理地址
+	; 压入函数memcpy的第二个参数：src
+	push eax
+	; 压入函数memcpy的第一个参数：dst
+	push dword [ebx + 8]             ; program header中偏移8字节处是p_vaddr，表示本段在内存中的起始虚拟地址
+	; 调用mem_cpy完成段复制
+	call mem_cpy
+	add esp, 12                      ; 清理栈中压入的三个参数
+	.PTNULL:
+	add ebx, edx                     ; edx为program header大小，即e_phentsize，在此使ebx指向下一个program header
+	loop .each_segment
+	ret
+
+; 逐字节拷贝：mem_cpy(dst, src, size) 
+; -----------------------------------------------------------
+; 输入：栈中三个参数（dst, src, size）
+; 输出：无
+; -----------------------------------------------------------
+mem_cpy:
+	cld                              ; 控制方向标志位DF，cld使DF置0，表示向高地址方向增加
+	push ebp
+	mov ebp, esp
+	push ecx                         ; rep指令用到了ecx，但ecx在外层循环已经使用，所以先入栈备份
+	mov edi, [ebp + 8]               ; 取参数dst
+	mov esi, [ebp + 12]              ; 取参数src
+	mov ecx, [ebp + 16]              ; 取参数size
+	rep movsb                        ; 逐字节拷贝
+
+	; 恢复环境
+	pop ecx
+	pop ebp
+	ret
 
 ; 创建页目录表及页表
 ; -----------------------------------------------------------

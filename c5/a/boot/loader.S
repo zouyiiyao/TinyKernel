@@ -6,8 +6,6 @@
 section loader vstart=LOADER_BASE_ADDR
 
 LOADER_STACK_TOP equ LOADER_BASE_ADDR
-	jmp loader_start       ; loader第一条指令是跳转指令，长度为3字节
-	times 5 db 0x00        ; 修正书上的代码，填充5个字节，目的是为了使得total_mem_bytes地址为0xb00，也可以使用书上的方式进行对齐
 
 	; 构建gdt及其内部的描述符，加载到内存中
 	GDT_BASE:
@@ -29,7 +27,7 @@ LOADER_STACK_TOP equ LOADER_BASE_ADDR
 	GDT_SIZE equ $ - GDT_BASE
 	GDT_LIMIT equ GDT_SIZE - 1
 	
-	times 59 dq 0          ; 此处预留59个描述符的空位
+	times 60 dq 0          ; 此处预留60个描述符的空位
 
 	; total_mem_bytes：用于保存物理内存容量，以字节为单位，此位置比较好记
 	; 当前偏移loader.bin文件头0x200字节（64 * 8），loader.bin被MBR加载到物理内存0x900，
@@ -49,7 +47,7 @@ LOADER_STACK_TOP equ LOADER_BASE_ADDR
 	ards_buf times 244 db 0
 	ards_nr dw 0                                      ; 用于记录ARDS结构体数量
 	
-	loader_start:                                     ; loader入口地址，0xc00
+	loader_start:                                     ; loader入口地址，0xc00，也是loader被执行的第一条指令
 
 	; 测试e801号与88号子功能
 	; jmp .e820_failed_so_try_e801

@@ -59,7 +59,7 @@ SECTION MBR vstart=0x7c00
 	call rd_disk_m_16               ; 调用函数，读取loader程序（四个扇区）
 ;;; 读取结束 ;;;
 	
-	jmp LOADER_BASE_ADDR            ; 跳转到loader程序第一条指令开始执行
+	jmp LOADER_BASE_ADDR + 0x300    ; 跳转到loader程序第一条指令开始执行，注意此处跳过了数据段（0x900 + 0x300 = 0xc00）
 
 ; rd_disk_m_16函数定义
 ; -----------------------------------------------------------
