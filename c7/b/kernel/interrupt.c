@@ -129,8 +129,10 @@ void idt_init(void) {
 	exception_init();    // 异常名初始化并注册通常的中断处理函数
 	pic_init();          // 初始化8259A
 
-	// 加载idt
-	uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
+	// 加载idt（虚拟地址）
+	// 这里需要注意，之前多了个括号，丢失了高16位，使用内核页目录表不会出错，但切换到用户进程页目录表会出错，找不到idt入口地址
+	// uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16));
+	uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)(uint32_t)idt << 16));
 	asm volatile("lidt %0" : : "m" (idt_operand));
 	put_str("idt_init done\n");
 }

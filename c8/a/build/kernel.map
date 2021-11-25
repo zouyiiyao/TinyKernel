@@ -95,7 +95,7 @@ LOAD build/debug.o
 .plt.got
  *(.plt.got)
 
-.text           0x00000000c0001500      0xa93
+.text           0x00000000c0001500      0xab3
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
@@ -105,24 +105,24 @@ LOAD build/debug.o
                 0x00000000c0001500                main
  .text          0x00000000c0001540       0x1e build/init.o
                 0x00000000c0001540                init_all
- .text          0x00000000c000155e      0x3a1 build/interrupt.o
+ .text          0x00000000c000155e      0x3b8 build/interrupt.o
                 0x00000000c0001820                idt_init
-                0x00000000c000186b                intr_enable
-                0x00000000c0001894                intr_disable
-                0x00000000c00018bd                intr_set_status
-                0x00000000c00018db                intr_get_status
- .text          0x00000000c00018ff       0xfd build/timer.o
-                0x00000000c00019b0                timer_init
- *fill*         0x00000000c00019fc        0x4 
- .text          0x00000000c0001a00      0x393 build/kernel.o
-                0x00000000c0001a00                intr_exit
- *fill*         0x00000000c0001d93        0xd 
- .text          0x00000000c0001da0      0x14e build/print.o
-                0x00000000c0001da0                put_str
-                0x00000000c0001dbe                put_char
-                0x00000000c0001e8b                put_int
- .text          0x00000000c0001eee       0xa5 build/debug.o
-                0x00000000c0001eee                panic_spin
+                0x00000000c0001882                intr_enable
+                0x00000000c00018ab                intr_disable
+                0x00000000c00018d4                intr_set_status
+                0x00000000c00018f2                intr_get_status
+ .text          0x00000000c0001916       0xfd build/timer.o
+                0x00000000c00019c7                timer_init
+ *fill*         0x00000000c0001a13        0xd 
+ .text          0x00000000c0001a20      0x393 build/kernel.o
+                0x00000000c0001a20                intr_exit
+ *fill*         0x00000000c0001db3        0xd 
+ .text          0x00000000c0001dc0      0x14e build/print.o
+                0x00000000c0001dc0                put_str
+                0x00000000c0001dde                put_char
+                0x00000000c0001eab                put_int
+ .text          0x00000000c0001f0e       0xa5 build/debug.o
+                0x00000000c0001f0e                panic_spin
  *(.gnu.warning)
 
 .fini
@@ -131,14 +131,14 @@ LOAD build/debug.o
                 [!provide]                        PROVIDE (_etext, .)
                 [!provide]                        PROVIDE (etext, .)
 
-.rodata         0x00000000c0001f94      0x2ff
+.rodata         0x00000000c0001fb4      0x2ff
  *(.rodata .rodata.* .gnu.linkonce.r.*)
- .rodata        0x00000000c0001f94       0x27 build/main.o
- .rodata        0x00000000c0001fbb        0xa build/init.o
- *fill*         0x00000000c0001fc5        0x3 
- .rodata        0x00000000c0001fc8      0x269 build/interrupt.o
- .rodata        0x00000000c0002231       0x23 build/timer.o
- .rodata        0x00000000c0002254       0x3f build/debug.o
+ .rodata        0x00000000c0001fb4       0x27 build/main.o
+ .rodata        0x00000000c0001fdb        0xa build/init.o
+ *fill*         0x00000000c0001fe5        0x3 
+ .rodata        0x00000000c0001fe8      0x269 build/interrupt.o
+ .rodata        0x00000000c0002251       0x23 build/timer.o
+ .rodata        0x00000000c0002274       0x3f build/debug.o
 
 .rodata1
  *(.rodata1)
@@ -147,16 +147,16 @@ LOAD build/debug.o
  *(.eh_frame_hdr)
  *(.eh_frame_entry .eh_frame_entry.*)
 
-.eh_frame       0x00000000c0002294      0x23c
+.eh_frame       0x00000000c00022b4      0x244
  *(.eh_frame)
- .eh_frame      0x00000000c0002294       0x34 build/main.o
- .eh_frame      0x00000000c00022c8       0x20 build/init.o
+ .eh_frame      0x00000000c00022b4       0x34 build/main.o
+ .eh_frame      0x00000000c00022e8       0x20 build/init.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c00022e8      0x160 build/interrupt.o
-                                        0x178 (size before relaxing)
- .eh_frame      0x00000000c0002448       0x6c build/timer.o
+ .eh_frame      0x00000000c0002308      0x168 build/interrupt.o
+                                        0x180 (size before relaxing)
+ .eh_frame      0x00000000c0002470       0x6c build/timer.o
                                          0x84 (size before relaxing)
- .eh_frame      0x00000000c00024b4       0x1c build/debug.o
+ .eh_frame      0x00000000c00024dc       0x1c build/debug.o
                                          0x34 (size before relaxing)
  *(.eh_frame.*)
 
