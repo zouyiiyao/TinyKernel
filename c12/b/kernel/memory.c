@@ -181,13 +181,13 @@ void* get_a_page(enum pool_flags pf, uint32_t vaddr) {
 	struct task_struct* cur = running_thread();
 	int32_t bit_idx = -1;
 
-	// 如果当前是用户进程申请用户内存，就修改用户进程自己的虚拟地址位图
+	// 如果当前是用户进程申请内存，就修改用户进程自己的虚拟地址位图
 	if (cur->pgdir != NULL && pf == PF_USER) {
 		bit_idx = (vaddr - cur->userprog_vaddr.vaddr_start) / PG_SIZE;
 		// 这里最好再判断对应位非1，也就是还未分配
 		ASSERT(bit_idx > 0);
 		bitmap_set(&cur->userprog_vaddr.vaddr_bitmap, bit_idx, 1);
-	// 如果是内核线程申请用户内存，就修改内核虚拟地址位图
+	// 如果是内核线程申请内存，就修改内核虚拟地址位图
 	} else if (cur->pgdir == NULL && pf == PF_KERNEL) {
 		bit_idx = (vaddr - kernel_vaddr.vaddr_start) / PG_SIZE;
 		ASSERT(bit_idx > 0);

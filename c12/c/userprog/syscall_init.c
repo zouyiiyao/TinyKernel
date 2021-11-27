@@ -4,6 +4,7 @@
 #include "print.h"
 #include "thread.h"
 #include "string.h"
+#include "console.h"
 
 #define SYSCALL_NR 32
 typedef void* syscall;
