@@ -2,7 +2,7 @@
 #include "sync.h"
 #include "io.h"
 #include "stdio.h"
-#include "stdio-kernel.h"
+#include "stdio_kernel.h"
 #include "interrupt.h"
 #include "memory.h"
 #include "debug.h"
