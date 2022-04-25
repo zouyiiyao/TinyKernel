@@ -165,14 +165,14 @@ LOAD build/stdio_kernel.o
  *(.text.startup .text.startup.*)
  *(.text.hot .text.hot.*)
  *(.text .stub .text.* .gnu.linkonce.t.*)
- .text          0x00000000c0001500      0x2bd build/main.o
+ .text          0x00000000c0001500      0x2b8 build/main.o
                 0x00000000c0001500                main
-                0x00000000c0001521                k_thread_a
-                0x00000000c00015e3                k_thread_b
-                0x00000000c00016a5                u_prog_a
-                0x00000000c0001731                u_prog_b
- .text          0x00000000c00017bd       0x41 build/init.o
-                0x00000000c00017bd                init_all
+                0x00000000c000151c                k_thread_a
+                0x00000000c00015de                k_thread_b
+                0x00000000c00016a0                u_prog_a
+                0x00000000c000172c                u_prog_b
+ .text          0x00000000c00017b8       0x46 build/init.o
+                0x00000000c00017b8                init_all
  .text          0x00000000c00017fe      0x480 build/interrupt.o
                 0x00000000c0001b6c                register_handler
                 0x00000000c0001b88                idt_init
