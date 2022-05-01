@@ -137,7 +137,7 @@ LOAD build/process.o
 .plt.got
  *(.plt.got)
 
-.text           0x00000000c0001500     0x3365
+.text           0x00000000c0001500     0x3371
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
@@ -233,23 +233,23 @@ LOAD build/process.o
                 0x00000000c0003bc9                sema_up
                 0x00000000c0003c7f                lock_acquire
                 0x00000000c0003cfb                lock_release
- .text          0x00000000c0003da6      0x2bf build/keyboard.o
+ .text          0x00000000c0003da6      0x2cb build/keyboard.o
                 0x00000000c0004031                keyboard_init
- .text          0x00000000c0004065      0x309 build/ioqueue.o
-                0x00000000c0004065                ioqueue_init
-                0x00000000c00040bc                ioq_full
-                0x00000000c00041f4                ioq_getchar
-                0x00000000c00042b0                ioq_putchar
- .text          0x00000000c000436e      0x1af build/tss.o
-                0x00000000c000436e                update_tss_esp
-                0x00000000c00043ef                tss_init
- .text          0x00000000c000451d      0x348 build/process.o
-                0x00000000c000451d                start_process
-                0x00000000c0004614                page_dir_activate
-                0x00000000c0004644                process_activate
-                0x00000000c0004696                create_page_dir
-                0x00000000c0004707                create_user_vaddr_bitmap
-                0x00000000c0004749                process_execute
+ .text          0x00000000c0004071      0x309 build/ioqueue.o
+                0x00000000c0004071                ioqueue_init
+                0x00000000c00040c8                ioq_full
+                0x00000000c0004200                ioq_getchar
+                0x00000000c00042bc                ioq_putchar
+ .text          0x00000000c000437a      0x1af build/tss.o
+                0x00000000c000437a                update_tss_esp
+                0x00000000c00043fb                tss_init
+ .text          0x00000000c0004529      0x348 build/process.o
+                0x00000000c0004529                start_process
+                0x00000000c0004620                page_dir_activate
+                0x00000000c0004650                process_activate
+                0x00000000c00046a2                create_page_dir
+                0x00000000c0004713                create_user_vaddr_bitmap
+                0x00000000c0004755                process_execute
  *(.gnu.warning)
 
 .fini
@@ -258,29 +258,29 @@ LOAD build/process.o
                 [!provide]                        PROVIDE (_etext, .)
                 [!provide]                        PROVIDE (etext, .)
 
-.rodata         0x00000000c0004868      0xc7d
+.rodata         0x00000000c0004874      0xc7d
  *(.rodata .rodata.* .gnu.linkonce.r.*)
- .rodata        0x00000000c0004868       0x57 build/main.o
- .rodata        0x00000000c00048bf        0xa build/init.o
- *fill*         0x00000000c00048c9        0x3 
- .rodata        0x00000000c00048cc      0x2cd build/interrupt.o
- *fill*         0x00000000c0004b99        0x3 
- .rodata        0x00000000c0004b9c       0x6b build/timer.o
- .rodata        0x00000000c0004c07       0x3f build/debug.o
- *fill*         0x00000000c0004c46        0x2 
- .rodata        0x00000000c0004c48      0x1ce build/memory.o
- *fill*         0x00000000c0004e16        0x2 
- .rodata        0x00000000c0004e18       0x68 build/bitmap.o
- .rodata        0x00000000c0004e80       0xa2 build/string.o
- *fill*         0x00000000c0004f22        0x2 
- .rodata        0x00000000c0004f24      0x2b6 build/thread.o
- *fill*         0x00000000c00051da        0x2 
- .rodata        0x00000000c00051dc      0x12f build/sync.o
- .rodata        0x00000000c000530b       0x36 build/keyboard.o
- *fill*         0x00000000c0005341        0x3 
- .rodata        0x00000000c0005344       0x9d build/ioqueue.o
- .rodata        0x00000000c00053e1       0x27 build/tss.o
- .rodata        0x00000000c0005408       0xdd build/process.o
+ .rodata        0x00000000c0004874       0x57 build/main.o
+ .rodata        0x00000000c00048cb        0xa build/init.o
+ *fill*         0x00000000c00048d5        0x3 
+ .rodata        0x00000000c00048d8      0x2cd build/interrupt.o
+ *fill*         0x00000000c0004ba5        0x3 
+ .rodata        0x00000000c0004ba8       0x6b build/timer.o
+ .rodata        0x00000000c0004c13       0x3f build/debug.o
+ *fill*         0x00000000c0004c52        0x2 
+ .rodata        0x00000000c0004c54      0x1ce build/memory.o
+ *fill*         0x00000000c0004e22        0x2 
+ .rodata        0x00000000c0004e24       0x68 build/bitmap.o
+ .rodata        0x00000000c0004e8c       0xa2 build/string.o
+ *fill*         0x00000000c0004f2e        0x2 
+ .rodata        0x00000000c0004f30      0x2b6 build/thread.o
+ *fill*         0x00000000c00051e6        0x2 
+ .rodata        0x00000000c00051e8      0x12f build/sync.o
+ .rodata        0x00000000c0005317       0x36 build/keyboard.o
+ *fill*         0x00000000c000534d        0x3 
+ .rodata        0x00000000c0005350       0x9d build/ioqueue.o
+ .rodata        0x00000000c00053ed       0x27 build/tss.o
+ .rodata        0x00000000c0005414       0xdd build/process.o
 
 .rodata1
  *(.rodata1)
@@ -289,38 +289,38 @@ LOAD build/process.o
  *(.eh_frame_hdr)
  *(.eh_frame_entry .eh_frame_entry.*)
 
-.eh_frame       0x00000000c00054e8      0xccc
+.eh_frame       0x00000000c00054f4      0xccc
  *(.eh_frame)
- .eh_frame      0x00000000c00054e8       0xa4 build/main.o
- .eh_frame      0x00000000c000558c       0x20 build/init.o
+ .eh_frame      0x00000000c00054f4       0xa4 build/main.o
+ .eh_frame      0x00000000c0005598       0x20 build/init.o
                                          0x38 (size before relaxing)
- .eh_frame      0x00000000c00055ac      0x188 build/interrupt.o
+ .eh_frame      0x00000000c00055b8      0x188 build/interrupt.o
                                         0x1a0 (size before relaxing)
- .eh_frame      0x00000000c0005734       0x8c build/timer.o
+ .eh_frame      0x00000000c0005740       0x8c build/timer.o
                                          0xa4 (size before relaxing)
- .eh_frame      0x00000000c00057c0       0x1c build/debug.o
+ .eh_frame      0x00000000c00057cc       0x1c build/debug.o
                                          0x34 (size before relaxing)
- .eh_frame      0x00000000c00057dc      0x180 build/memory.o
+ .eh_frame      0x00000000c00057e8      0x180 build/memory.o
                                         0x198 (size before relaxing)
- .eh_frame      0x00000000c000595c       0x8c build/bitmap.o
+ .eh_frame      0x00000000c0005968       0x8c build/bitmap.o
                                          0xa4 (size before relaxing)
- .eh_frame      0x00000000c00059e8      0x140 build/string.o
+ .eh_frame      0x00000000c00059f4      0x140 build/string.o
                                         0x158 (size before relaxing)
- .eh_frame      0x00000000c0005b28      0x140 build/thread.o
+ .eh_frame      0x00000000c0005b34      0x140 build/thread.o
                                         0x158 (size before relaxing)
- .eh_frame      0x00000000c0005c68      0x140 build/list.o
+ .eh_frame      0x00000000c0005c74      0x140 build/list.o
                                         0x158 (size before relaxing)
- .eh_frame      0x00000000c0005da8       0xc0 build/console.o
+ .eh_frame      0x00000000c0005db4       0xc0 build/console.o
                                          0xd8 (size before relaxing)
- .eh_frame      0x00000000c0005e68       0xc8 build/sync.o
+ .eh_frame      0x00000000c0005e74       0xc8 build/sync.o
                                          0xe0 (size before relaxing)
- .eh_frame      0x00000000c0005f30       0x60 build/keyboard.o
+ .eh_frame      0x00000000c0005f3c       0x60 build/keyboard.o
                                          0x78 (size before relaxing)
- .eh_frame      0x00000000c0005f90      0x100 build/ioqueue.o
+ .eh_frame      0x00000000c0005f9c      0x100 build/ioqueue.o
                                         0x118 (size before relaxing)
- .eh_frame      0x00000000c0006090       0x64 build/tss.o
+ .eh_frame      0x00000000c000609c       0x64 build/tss.o
                                          0x7c (size before relaxing)
- .eh_frame      0x00000000c00060f4       0xc0 build/process.o
+ .eh_frame      0x00000000c0006100       0xc0 build/process.o
                                          0xd8 (size before relaxing)
  *(.eh_frame.*)
 
