@@ -39,6 +39,8 @@ Page 470：代码中第56行改为'0'加shift应该为')'
 
 Page 507：代码中PCB内核栈指针加减法用法错误，但不影响运行，cur->self_kstack += sizeof(struct thread_stack) / sizeof(*cur->self_kstack)，如果修改的话注意thread.c里面对应的位置也要修改
 
+Page 681：sys_getcwd函数768行，未释放io_buf
+
 疑问：
 
 为什么ucore和大象书都使用平坦模型，大象书连中断时段选择子的切换与恢复都省略了，不能防止用户进程对3GB以上空间代码段和数据段的访问（如用户态进程可以直接调用sys_getpid），可能是为了实现上的方便
